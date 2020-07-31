@@ -48,7 +48,7 @@ const app = (socketServer) => {
         })
 
         lastMessages.then((messages) => {
-            socket.emit('bulk-message', message)
+            socket.emit('bulk-message', messages)
         })
     }
 }
