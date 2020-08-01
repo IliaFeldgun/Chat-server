@@ -1,56 +1,45 @@
 import {MessageModel} from '../db/sequelize'
+import Emitter from './emitter'
 
 const LAST_MESSSAGES_AMOUNT = 10
 let users = []
+const removeUser = (userName) => {
+    if (userName) {
+        users = users.filter((user) => {
+            return userName !== user
+        })
+    }
+}
 const app = (socketServer) => {
     socketServer.on('connection', (socket) => {
-        sendUsers()
-        sendLastMessages(socket, LAST_MESSSAGES_AMOUNT)
+        Emitter.sendUsers(socketServer, users)
+        Emitter.sendLastMessages(socket, LAST_MESSSAGES_AMOUNT)
+
         socket.on('message', (message) => {
             if (socket.userName) {
                 message.userName = socket.userName
                 MessageModel.create(message)
-
-                socketServer.emit('message', message)
+        
+                Emitter.sendMessage(socketServer, message)
             }
         })
-
         socket.on('disconnect', () => {
-            
-            users = users.filter((user) => {
-                return socket.userName !== user
-            })
+            removeUser(socket.userName)
         })
-
         socket.on('login', (userName) => {
             if (socket.userName !== userName) {
+                removeUser(socket.userName)
                 socket.userName = userName
+
                 users.push(userName)
             }
-
+        
             socket.emit('logged-in', {
                 userName
             })
-
-            sendUsers()
+        
+            Emitter.sendUsers(socketServer, users)
         })
     })
-
-    const sendUsers = () => {
-        socketServer.sockets.emit('users', users)
-    }
-
-    const sendLastMessages = (socket, limit) => {
-        const lastMessages = MessageModel.findAll({
-            limit,
-            order: [
-                ['timestamp', 'DESC']
-            ]
-        })
-
-        lastMessages.then((messages) => {
-            socket.emit('bulk-message', messages)
-        })
-    }
 }
 export default app
