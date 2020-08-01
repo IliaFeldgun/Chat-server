@@ -18,6 +18,7 @@ const app = (socketServer) => {
         socket.on('message', (message) => {
             if (socket.userName) {
                 message.userName = socket.userName
+                message.timestamp = (new Date()).toJSON()
                 MessageModel.create(message)
         
                 Emitter.sendMessage(socketServer, message)
