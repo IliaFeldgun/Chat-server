@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/IliaFeldgun/Chat-server#readme",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "babel-plugin-inline-dotenv": "^1.6.0",
     "dotenv": "^8.2.0",
     "mysql2": "^2.1.0",
