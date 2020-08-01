@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize'
+import {MessageModelDefinition} from './models'
 
 const sequelize = new Sequelize(process.env.MYSQL_CONNECTION_STRING, {
   dialect: 'mysql'
@@ -8,11 +9,8 @@ sequelize.authenticate().then((res) => {
 }).catch ((err) => {
     console.log(err)
 })
-const MessageModel = sequelize.define('Message', {
-    userName: Sequelize.STRING,
-    message: Sequelize.TEXT,
-    timestamp: Sequelize.DATE
-})
+const MessageModel = sequelize.define('Message', MessageModelDefinition)
+
 // sequelize.sync({force: true, alter: true}).then((res) => {
 sequelize.sync().then((res) => {
     console.log(`synced ${res}`)
