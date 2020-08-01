@@ -1,10 +1,11 @@
-import SocketIO from 'socket.io'
 import {MessageModel} from '../db/sequelize'
+
+const LAST_MESSSAGES_AMOUNT = 10
 let users = []
 const app = (socketServer) => {
     socketServer.on('connection', (socket) => {
         sendUsers()
-        sendLastMessages(socket, 10)
+        sendLastMessages(socket, LAST_MESSSAGES_AMOUNT)
         socket.on('message', (message) => {
             if (socket.userName) {
                 message.userName = socket.userName
